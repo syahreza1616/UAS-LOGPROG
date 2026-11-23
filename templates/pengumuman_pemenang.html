@@ -1,0 +1,273 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pengumuman Pemenang - E-Voting HMTI</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            color: #1e293b;
+            min-height: 100vh;
+            padding: 30px 15px;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: 40px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            color: #1d4ed8;
+            margin-bottom: 12px;
+        }
+
+        .subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .winner-card {
+            background: #eff6ff;
+            border: 2px solid #bfdbfe;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .winner-photo {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+            margin-bottom: 18px;
+        }
+
+        .winner-name {
+            color: #1d4ed8;
+            font-size: 25px;
+            margin-bottom: 10px;
+        }
+
+        .winner-info {
+            color: #475569;
+            line-height: 1.8;
+        }
+
+        .vote-count {
+            margin-top: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            color: #1d4ed8;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .message {
+            padding: 22px;
+            border-radius: 12px;
+            margin: 20px 0;
+            line-height: 1.7;
+        }
+
+        .warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .tie {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .empty {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .tie-list {
+            list-style: none;
+            margin-top: 18px;
+        }
+
+        .tie-list li {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            color: #1e293b;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 13px 25px;
+            background: #1d4ed8;
+            color: white;
+            text-decoration: none;
+            border-radius: 9px;
+            font-weight: bold;
+        }
+
+        .back-button:hover {
+            background: #1e40af;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 18px;
+            }
+
+            .winner-name {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="icon">🏆</div>
+
+        <h1>Pengumuman Pemenang</h1>
+
+        <p class="subtitle">
+            Hasil Pemilihan Direktur Utama HMTI FT UNSIKA
+            Periode 2027
+        </p>
+
+        {% if status_pemilu == "AKTIF" %}
+
+            <div class="message warning">
+                <h2>⏳ Pemilu Masih Berlangsung</h2>
+                <p>
+                    Pemilihan masih dibuka. Pemenang belum dapat
+                    diumumkan sampai proses pemungutan suara selesai.
+                </p>
+            </div>
+
+        {% elif pemenang %}
+
+            <div class="winner-card">
+
+                {% if pemenang.foto %}
+                    <img
+                        src="{{ url_for('static', filename='img/' ~ pemenang.foto) }}"
+                        alt="Foto {{ pemenang.nama_calon }}"
+                        class="winner-photo"
+                    >
+                {% endif %}
+
+                <h2 class="winner-name">
+                    {{ pemenang.nama_calon }}
+                </h2>
+
+                <p class="winner-info">
+                    {{ pemenang.program_studi }}<br>
+                    Angkatan {{ pemenang.angkatan }}
+                </p>
+
+                <div class="vote-count">
+                    {{ pemenang.total_suara }} Suara
+                </div>
+
+                <p>
+                   Persentase Suara:
+                   <strong>{{ persentase_pemenang }}%</strong>
+                </p>
+
+                <p>
+                   Total Seluruh Suara:
+                   <strong>{{ total_suara }}</strong>
+                </p>
+
+            </div>
+
+            <div class="message" style="background: #dcfce7; color: #166534;">
+                <h3>Congrats selamat derr, menuju HMTI emas!!!!</h3>
+                <p>
+                    Makasih buat lu semua yang udah nyoblos, dan buat yang kalah NT derr, dont cry cry bosQ, See u on top
+                </p>
+            </div>
+
+        {% elif kandidat_seri %}
+
+            <div class="message tie">
+                <h2>⚖️Hasil seri, ayo Rematch!!⚖️</h2>
+                <p>
+                    2 calon suara nya sama derr, ayo rematch, jangan lupa buat nyoblos lagi yaa bosQ! 
+                </p>
+
+                <ul class="tie-list">
+                    {% for kandidat in kandidat_seri %}
+                        <li>
+                            <strong>{{ kandidat.nama_calon }}</strong>
+                            <br>
+                            {{ kandidat.total_suara }} suara
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        {% else %}
+
+            <div class="message empty">
+                <h2>Belum Ada Pemenang</h2>
+                <p>
+                    Belum ada suara yang masuk atau belum tersedia
+                    kandidat. Pemenang belum dapat ditentukan.
+                </p>
+            </div>
+
+        {% endif %}
+
+        {% if session.get('role') == 'admin' %}
+
+            <a href="{{ url_for('dashboard_admin') }}" class="back-button">
+                Kembali ke Dashboard Admin
+            </a>
+
+        {% elif session.get('role') == 'mahasiswa' %}
+
+            <a href="{{ url_for('dashboard_mahasiswa') }}" class="back-button">
+                Kembali ke Dashboard Mahasiswa
+            </a>
+
+        {% else %}
+
+            <a href="{{ url_for('home') }}" class="back-button">
+                Kembali ke Halaman Utama
+            </a>
+
+        {% endif %}
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Statistik Pemilu - E-Voting HMTI</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .header {
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #1e3a8a;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+        }
+
+        .summary-card h3 {
+            color: #666;
+            font-size: 15px;
+            margin: 0 0 10px;
+        }
+
+        .summary-card p {
+            color: #1e3a8a;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            max-width: 450px;
+            height: 350px;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        .participation-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            padding: 18px;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .info-item h3 {
+            margin: 0 0 10px;
+            font-size: 15px;
+        }
+
+        .info-item p {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .sudah {
+            color: #2563eb;
+        }
+
+        .belum {
+            color: #dc2626;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #1e3a8a;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+        .back-button:hover {
+            background: #162d6b;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 15px;
+            }
+
+            .summary {
+                grid-template-columns: 1fr;
+            }
+
+            .participation-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>Statistik Pemilu</h1>
+        <p>
+            E-Voting Pemilihan Direktur Utama HMTI FT UNSIKA Periode 2027
+        </p>
+    </div>
+
+    <div class="summary">
+
+        <div class="summary-card">
+            <h3>Total Mahasiswa</h3>
+            <p>{{ jumlah_mahasiswa }}</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>Sudah Memilih</h3>
+            <p>{{ jumlah_pemilih }}</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>Belum Memilih</h3>
+            <p>{{ belum_memilih }}</p>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2 style="text-align:center;">
+            Grafik Partisipasi Pemilih
+        </h2>
+
+        <div class="chart-container">
+            <canvas id="grafikPartisipasi"></canvas>
+        </div>
+
+        <div class="participation-info">
+
+            <div class="info-item">
+                <h3 class="sudah">Sudah Memilih</h3>
+                <p class="sudah">{{ persentase_pemilih }}%</p>
+            </div>
+
+            <div class="info-item">
+                <h3 class="belum">Belum Memilih</h3>
+                <p class="belum">{{ persentase_belum_memilih }}%</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <a href="{{ url_for('dashboard_admin') }}" class="back-button">
+        Kembali ke Dashboard
+    </a>
+
+</div>
+
+<script>
+
+    const jumlahPemilih = {{ jumlah_pemilih }};
+    const belumMemilih = {{ belum_memilih }};
+
+    const ctx = document.getElementById('grafikPartisipasi');
+
+    new Chart(ctx, {
+        type: 'pie',
+
+        data: {
+            labels: ['Sudah Memilih', 'Belum Memilih'],
+
+            datasets: [{
+                data: [jumlahPemilih, belumMemilih],
+
+                backgroundColor: [
+                    '#2563eb',
+                    '#dc2626'
+                ],
+
+                borderColor: '#ffffff',
+                borderWidth: 3
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = jumlahPemilih + belumMemilih;
+                            const nilai = context.raw;
+
+                            const persen = total > 0
+                                ? (nilai / total * 100).toFixed(1)
+                                : 0;
+
+                            return context.label + ': ' +
+                                nilai + ' mahasiswa (' + persen + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+</script>
+
+</body>
+</html>

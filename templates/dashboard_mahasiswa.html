@@ -1,0 +1,398 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard Mahasiswa - E-Voting HMTI</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        header {
+            background: #0f172a;
+            color: white;
+            padding: 25px 8%;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+            font-size: 25px;
+        }
+
+        header p {
+            margin: 0;
+            color: #cbd5e1;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .sambutan {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .sambutan h2 {
+            margin-top: 0;
+            color: #1e40af;
+        }
+
+        .info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .info-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid #2563eb;
+        }
+
+        .info-card p {
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .info-card h3 {
+            margin: 0;
+        }
+
+        .judul {
+            margin: 30px 0 15px;
+        }
+
+        .kandidat-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .kandidat {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+        }
+
+        .foto {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            background: #e2e8f0;
+        }
+
+        .isi-kandidat {
+            padding: 20px;
+        }
+
+        .isi-kandidat h3 {
+            margin-top: 0;
+            color: #1e40af;
+        }
+
+        .isi-kandidat p {
+            line-height: 1.6;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .nonaktif {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .pesan {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        
+        .notifikasi {
+           padding: 15px 20px;
+           margin-bottom: 20px;
+           border-radius: 8px;
+           font-weight: bold;
+        }
+
+        .notifikasi.success {
+           background: #dcfce7;
+           color: #166534;
+           border: 1px solid #86efac;
+        }
+
+        .notifikasi.error {
+           background: #fee2e2;
+           color: #991b1b;
+           border: 1px solid #fca5a5;
+        }
+
+
+        .logout {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 11px 18px;
+            background: #dc2626;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        .pengumuman-button {
+            display: inline-block;
+            padding: 13px 20px;
+            margin: 8px 8px 8px 0;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .pengumuman-button:hover {
+           background: #1d4ed8;
+        }  
+
+        .vote-button {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-top: 15px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .vote-button:hover {
+    background: #1d4ed8;
+        }
+
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #64748b;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                padding: 22px;
+            }
+
+            header h1 {
+                font-size: 21px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>E-VOTING HMTI FT UNSIKA 2027</h1>
+    <p>Pemilihan Direktur Utama HMTI FT UNSIKA Periode 2027</p>
+    <p><i>NO BEST WAY, BUT ALWAYS A BETTER WAY</i></p>
+</header>
+
+<div class="container">
+
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+       {% for category, message in messages %}
+           <div class="notifikasi {{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+
+    <div class="sambutan">
+        <h2>Selamat Datang, {{ mahasiswa.nama }}!</h2>
+        <p>
+            Selamat datang di halaman pemilihan Direktur Utama
+            HMTI FT UNSIKA Periode 2027.
+        </p>
+        <p>
+            Silakan lihat informasi kandidat sebelum memberikan suara.
+        </p>
+    </div>
+
+    <div class="info">
+
+        <div class="info-card">
+            <p>Nama Mahasiswa</p>
+            <h3>{{ mahasiswa.nama }}</h3>
+        </div>
+
+        <div class="info-card">
+            <p>Nomor Induk Mahasiswa</p>
+            <h3>{{ mahasiswa.nim }}</h3>
+        </div>
+
+        <div class="info-card">
+            <p>Program Studi</p>
+            <h3>{{ mahasiswa.program_studi }}</h3>
+        </div>
+
+        <div class="info-card">
+            <p>Status Pemilihan</p>
+
+            {% if mahasiswa.sudah_memilih == 1 %}
+                <span class="status">Sudah Memilih</span>
+            {% else %}
+                <span class="status nonaktif">Belum Memilih</span>
+            {% endif %}
+        </div>
+
+        <div class="info-card">
+            <p>Status Pemilu</p>
+
+            {% if status_pemilu == "AKTIF" %}
+                <span class="status">Sedang Berlangsung</span>
+            {% else %}
+                <span class="status nonaktif">{{ status_pemilu }}</span>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <h2 class="judul">Kandidat Direktur Utama</h2>
+
+
+    <div class="kandidat-container">
+
+        {% for kandidat in daftar_kandidat %}
+
+        <div class="kandidat">
+
+            {% if kandidat.foto %}
+                <img
+                    class="foto"
+                    src="{{ url_for('static', filename='img/' ~ kandidat.foto) }}"
+                    alt="Foto {{ kandidat.nama_calon }}"
+                >
+            {% else %}
+                <div class="foto"></div>
+            {% endif %}
+
+            <div class="isi-kandidat">
+
+                <h3>{{ kandidat.nama_calon }}</h3>
+
+                <p>
+                    {{ kandidat.program_studi }}
+                    - Angkatan {{ kandidat.angkatan }}
+                </p>
+
+                <hr>
+
+                <h4>Visi</h4>
+                <p>{{ kandidat.visi }}</p>
+
+                <h4>Misi</h4>
+                <p>{{ kandidat.misi }}</p>
+
+            {% if mahasiswa.sudah_memilih == 1 %}
+
+                <p style="color: green; font-weight: bold;">
+                   Anda sudah menggunakan hak suara.
+                </p>
+
+            {% elif status_pemilu == "AKTIF" %}
+
+                <form
+                   method="POST"
+                   action="{{ url_for('proses_vote', id_kandidat=kandidat.id_kandidat) }}"
+                   onsubmit="return confirm('Yakin ingin memilih {{ kandidat.nama_calon }}? Pilihan tidak dapat diubah setelah dikirim.');"
+                >
+                   <button type="submit" class="vote-button">
+                      VOTE
+                    </button>
+                </form>
+
+            {% else %}
+
+               <p>Pemilu sedang tidak aktif.</p>
+
+            {% endif %}
+
+            </div>
+        </div>
+
+        {% else %}
+
+        <p>Belum ada kandidat yang terdaftar.</p>
+
+        {% endfor %}
+
+    </div>
+
+    <div class="pesan">
+        <h3>Informasi Pemilihan</h3>
+
+        {% if status_pemilu == "AKTIF" and mahasiswa.sudah_memilih == 0 %}
+            <p>
+                Pemilihan sedang berlangsung.
+                Silakan pelajari visi dan misi setiap kandidat
+                sebelum memberikan suara.
+            </p>
+        {% elif mahasiswa.sudah_memilih == 1 %}
+            <p>
+                Terima kasih telah berpartisipasi dalam pemilihan.
+            </p>
+        {% else %}
+            <p>
+                Pemilihan saat ini tidak sedang berlangsung.
+            </p>
+        {% endif %}
+    </div>
+
+   <a class="pengumuman-button" href="{{ url_for('pengumuman_pemenang') }}">
+       🏆 Champion Reveal
+    </a>
+
+    <a class="logout" href="{{ url_for('logout') }}">
+        Logout
+    </a>
+
+</div>
+
+<footer>
+    E-Voting HMTI FT UNSIKA 2027
+</footer>
+
+</body>
+</html>

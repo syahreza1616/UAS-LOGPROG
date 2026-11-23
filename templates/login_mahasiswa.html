@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Mahasiswa - E-Vote</title>
+</head>
+<body>
+    <h1>LOGIN MAHASISWA</h1>
+    <p>Silakan masukkan NIM untuk masuk ke sistem E-Vote.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    <form action="/login/mahasiswa" method="POST">
+        <label for="nim">Nomor Induk Mahasiswa (NIM)</label>
+        <br>
+        <input
+            type="text"
+            id="nim"
+            name="nim"
+            placeholder="Masukkan NIM"
+            required
+        >
+        <br><br>
+
+        <button type="submit">Login</button>
+    </form>
+
+    <br>
+    <a href="/">Kembali ke Halaman Utama</a>
+</body>
+</html>

@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <h1> Manajemen Calon Direktur Utama HMTI FT UNSIKA 2027</h1>
+
+    <h2>Tambah Calon Direktur Utama</h2>
+
+    <h2>Daftar Calon Direktur Utama</h2>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            padding: 25px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+        .box {
+            background: white;
+            padding: 22px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        input, textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px;
+            margin: 7px 0 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        button, .btn {
+            padding: 10px 15px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .hapus { background: #dc2626; }
+        .edit { background: #d97706; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th { background: #e2e8f0; }
+        .pesan { color: #15803d; }
+        @media (max-width: 650px) {
+            .tabel-wrapper { overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h1>Pengelolaan Kandidat</h1>
+
+    <p>
+        <a class="btn" href="{{ url_for('dashboard_admin') }}">
+            Kembali ke Dashboard
+        </a>
+    </p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <p class="pesan">{{ message }}</p>
+        {% endfor %}
+    {% endwith %}
+
+    {% if kandidat_edit is defined and kandidat_edit %}
+
+        <div class="box">
+            <h2>Edit Kandidat</h2>
+
+            
+                <form method="POST" enctype="multipart/form-data">
+
+                    <label>Nama Calon</label>
+                    <input type="text" name="nama_calon"
+                         value="{{ kandidat_edit.nama_calon }}" required>
+
+                    <label>Program Studi</label>
+                    <input type="text" name="program_studi"
+                         value="{{ kandidat_edit.program_studi }}" required>
+
+                    <label>Angkatan</label>
+                    <input type="number" name="angkatan"
+                         value="{{ kandidat_edit.angkatan }}" required>
+
+                    <label>Visi</label>
+                    <textarea name="visi" required>{{ kandidat_edit.visi }}</textarea>
+
+                    <label>Misi</label>
+                    <textarea name="misi" required>{{ kandidat_edit.misi }}</textarea>
+
+                    <label>Foto Kandidat Saat Ini</label>
+
+                    {% if kandidat_edit.foto %}
+                        <br>
+                        <img
+                            src="{{ url_for('static', filename='img/' ~ kandidat_edit.foto) }}"
+                            alt="Foto {{ kandidat_edit.nama_calon }}"
+                            width="150"
+                            style="display:block; margin:10px 0; border-radius:10px;"
+                        >
+                    {% else %}
+                        <p>Belum ada foto kandidat.</p>
+                    {% endif %}
+
+                    <label>Ganti Foto Kandidat (Opsional)</label>
+                    <input type="file" name="foto" accept=".jpg,.jpeg,.png,.webp">
+
+                    <button type="submit">Simpan Perubahan</button>
+
+                   <a class="btn" href="{{ url_for('kelola_kandidat') }}">
+                       Batal
+                    </a>
+
+                </form>
+
+        </div>
+
+    {% else %}
+
+        <div class="box">
+            <h2>Tambah Kandidat Baru</h2>
+
+            <form method="POST" 
+                  action="{{ url_for('tambah_kandidat') }}" 
+                  enctype="multipart/form-data">
+                <label>Nama Calon</label>
+                <input type="text" name="nama_calon" required>
+
+                <label>Program Studi</label>
+                <input type="text" name="program_studi" required>
+
+                <label>Angkatan</label>
+                <input type="number" name="angkatan" required>
+                
+                <label>Foto Calon Direktur Utama</label>
+                <input type="file" name="foto" accept=".jpg,.jpeg,.png,.webp">
+                
+                <label>Visi</label>
+                <textarea name="visi" required></textarea>
+
+                <label>Misi</label>
+                <textarea name="misi" required></textarea>
+
+                <button type="submit">Tambah Kandidat</button>
+            </form>
+        </div>
+
+        <div class="box">
+            <h2>Daftar Kandidat</h2>
+
+            <div class="tabel-wrapper">
+                <table>
+                    <tr>
+                        <th>No.</th>
+                        <th>Foto</th>
+                        <th>Nama Calon</th>
+                        <th>Program Studi</th>
+                        <th>Angkatan</th>
+                        <th>Visi</th>
+                        <th>Misi</th>
+                        <th>Suara</th>
+                        <th>Aksi</th>
+                    </tr>
+
+                    {% for kandidat in daftar_kandidat %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>
+                            {% if kandidat.foto %}
+                               <img src="{{ url_for('static', filename='img/' ~ kandidat.foto) }}"
+                                    width="80"
+                                    alt="Foto {{ kandidat.nama_calon }}">
+                            {% else %}
+                               Belum ada foto
+                            {% endif %}
+                        </td>
+                        <td>{{ kandidat.nama_calon }}</td>
+                        <td>{{ kandidat.program_studi }}</td>
+                        <td>{{ kandidat.angkatan }}</td>
+                        <td class="isi-visi">{{ kandidat.visi }}</td>
+                        <td class="isi-misi">{{ kandidat.misi }}</td>
+                        <td>{{ kandidat.total_suara }}</td>
+                        <td>
+                            <a class="btn edit"
+                               href="{{ url_for('edit_kandidat', id_kandidat=kandidat.id_kandidat) }}">
+                               Edit
+                            </a>
+
+                            <form method="POST"
+                                  action="{{ url_for('hapus_kandidat', id_kandidat=kandidat.id_kandidat) }}"
+                                  style="display:inline;"
+                                  onsubmit="return confirm('Yakin ingin menghapus kandidat ini?')">
+                                <button class="hapus" type="submit">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9">Belum ada kandidat.</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+
+    {% endif %}
+
+</div>
+</body>
+</html>

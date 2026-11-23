@@ -1,0 +1,288 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hasil Voting - E-Voting HMTI</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .header {
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin-bottom: 8px;
+            color: #1e3a8a;
+        }
+
+        .header p {
+            color: #666;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.07);
+        }
+
+        .summary-card h3 {
+            margin: 0 0 10px;
+            color: #666;
+            font-size: 15px;
+        }
+
+        .summary-card p {
+            margin: 0;
+            font-size: 28px;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+
+        .chart-container {
+            max-width: 450px;
+            height: 350px;
+            margin: auto;
+            position: relative;
+        }
+
+        .candidate-list {
+            margin-top: 25px;
+        }
+
+        .candidate-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px;
+            margin-bottom: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .candidate-item strong {
+            color: #1e3a8a;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px 15px;
+            color: #777;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 12px 20px;
+            background: #1e3a8a;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .back-button:hover {
+            background: #162d6b;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 15px;
+            }
+
+            .summary {
+                grid-template-columns: 1fr;
+            }
+
+            .candidate-item {
+                gap: 10px;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>Hasil Voting</h1>
+        <p>
+            E-Voting Pemilihan Direktur Utama HMTI FT UNSIKA Periode 2027
+        </p>
+    </div>
+
+    <div class="summary">
+
+        <div class="summary-card">
+            <h3>Total Suara Masuk</h3>
+            <p>{{ total_suara }}</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>Jumlah Mahasiswa</h3>
+            <p>{{ jumlah_mahasiswa }}</p>
+        </div>
+
+        <div class="summary-card">
+            <h3>Mahasiswa Sudah Memilih</h3>
+            <p>{{ jumlah_pemilih }}</p>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2 style="text-align:center;">
+            Grafik Perolehan Suara Kandidat
+        </h2>
+
+        {% if total_suara > 0 %}
+
+            <div class="chart-container">
+                <canvas id="grafikSuara"></canvas>
+            </div>
+
+            <div class="candidate-list">
+
+                {% for kandidat in daftar_kandidat %}
+
+                    <div class="candidate-item">
+                        <strong>{{ kandidat.nama_calon }}</strong>
+
+                        <span>
+                            {{ kandidat.total_suara }} suara
+                            ({{ "%.1f"|format(kandidat.total_suara / total_suara * 100) }}%)
+                        </span>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="empty">
+                <h3>Belum Ada Suara Masuk</h3>
+                <p>Grafik akan muncul setelah mahasiswa mulai melakukan voting.</p>
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <a href="{{ url_for('dashboard_admin') }}" class="back-button">
+        Kembali ke Dashboard
+    </a>
+
+</div>
+
+{% if total_suara > 0 %}
+<script>
+
+    const labels = [
+        {% for kandidat in daftar_kandidat %}
+            {{ kandidat.nama_calon|tojson }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    const dataSuara = [
+        {% for kandidat in daftar_kandidat %}
+            {{ kandidat.total_suara }}{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    const ctx = document.getElementById('grafikSuara');
+
+    new Chart(ctx, {
+        type: 'pie',
+
+        data: {
+            labels: labels,
+
+            datasets: [{
+                label: 'Jumlah Suara',
+
+                data: dataSuara,
+
+                backgroundColor: [
+                    '#2563eb',
+                    '#16a34a',
+                    '#f59e0b',
+                    '#dc2626'
+                ],
+
+                borderColor: '#ffffff',
+                borderWidth: 3
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const nilai = context.raw;
+                            const total = dataSuara.reduce(
+                                (a, b) => a + b, 0
+                            );
+
+                            const persen = (nilai / total * 100).toFixed(1);
+
+                            return context.label + ': ' +
+                                nilai + ' suara (' + persen + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+</script>
+{% endif %}
+
+</body>
+</html>
