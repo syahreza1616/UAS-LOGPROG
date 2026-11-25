@@ -5,17 +5,162 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-VOTE MAHASISWA</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            text-align: center;
+        }
+
+        .header {
+            background: #173b68;
+            color: white;
+            padding: 35px 20px;
+            border-radius: 18px 18px 0 0;
+        }
+
+        .header h1 {
+            margin: 10px 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            margin: 0;
+            color: #dceafa;
+        }
+
+        .content {
+            background: white;
+            padding: 35px 25px;
+            border-radius: 0 0 18px 18px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .content h2 {
+            color: #173b68;
+            margin-top: 0;
+        }
+
+        .content p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .pilihan {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-top: 30px;
+        }
+
+        .card {
+            border: 1px solid #e2e8f0;
+            padding: 25px 15px;
+            border-radius: 13px;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            color: #173b68;
+            margin: 10px 0;
+        }
+
+        .card p {
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .tombol {
+            display: block;
+            padding: 12px;
+            background: #2563eb;
+            color: white;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .admin .tombol {
+            background: #173b68;
+        }
+
+        footer {
+            margin-top: 25px;
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .pilihan {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <h1>E-VOTE MAHASISWA</h1>
-    <p>Sistem Pemilihan Ketua Himpunan Mahasiswa</p>
+    <div class="container">
 
-    <a href="/login/mahasiswa">
-        <button>Login Mahasiswa</button>
-    </a>
+        <div class="header">
+            <h1>E-VOTE MAHASISWA</h1>
+            <p>HMTI FT UNSIKA</p>
+        </div>
 
-    <a href="/login/admin">
-        <button>Login Admin</button>
-    </a>
+        <div class="content">
+            <h2>Selamat Datang!</h2>
+            <p>
+                Sistem Pemilihan Direktur Utama
+                Himpunan Mahasiswa Teknik Industri.
+                Silakan pilih jenis akun Anda.
+            </p>
+
+            <div class="pilihan">
+
+                <a href="/login/mahasiswa" class="card">
+                    <h3>Mahasiswa</h3>
+                    <p>Masuk menggunakan Nomor Induk Mahasiswa (NIM).</p>
+                    <span class="tombol">LOGIN MAHASISWA</span>
+                </a>
+
+                <a href="/login/admin" class="card admin">
+                    <h3>Admin</h3>
+                    <p>Masuk menggunakan username dan password admin.</p>
+                    <span class="tombol">LOGIN ADMIN</span>
+                </a>
+
+            </div>
+
+            <footer>
+                © 2026 HMTI FT UNSIKA · E-Voting System
+            </footer>
+        </div>
+
+    </div>
 </body>
 </html>
